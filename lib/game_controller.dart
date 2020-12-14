@@ -2,11 +2,11 @@ import 'dart:math';
 
 import 'package:escape_room/components/coords.dart';
 import 'package:escape_room/components/player.dart';
+import 'package:escape_room/utils/event_handler.dart';
 import 'package:flame/flame.dart';
 import 'package:flame/game.dart';
 import 'package:flame/keyboard.dart';
 import 'package:flutter/cupertino.dart';
-import 'package:flutter/services.dart';
 
 class GameController extends Game with KeyboardEvents {
   Size screenSize;
@@ -17,6 +17,7 @@ class GameController extends Game with KeyboardEvents {
   static final double _minTileSize = 50.0;
 
   static final Random random = Random();
+  EventHandler handler;
 
   GameController() {
     init();
@@ -24,6 +25,7 @@ class GameController extends Game with KeyboardEvents {
 
   void init() async {
     resize(await Flame.util.initialDimensions());
+    this.handler = EventHandler(this);
     this.player = new Player(this);
     print(this.screenSize);
   }
@@ -48,35 +50,20 @@ class GameController extends Game with KeyboardEvents {
   }
 
   @override
-  void onKeyEvent(event) {
-    final bool isKeyDown = event is RawKeyDownEvent;
-    if (isKeyDown) {
-      String code = event.data.keyLabel;
-      Coords coords = this.player.getCoords();
-      double coordX = coords.getX();
-      double coordY = coords.getY();
+  void onKeyEvent(RawKeyEvent event) {
+    handler.handleKeyboardEvent(event);
+  }
 
-      double delta = this.player.getSpeed();
+  void onHorizontalDragUpdate(DragUpdateDetails details) {
+    this.handler.handleDragEvent(Direction.horizontal, details);
+  }
 
-      switch (code) {
-        case 'ArrowUp':
-          coordY -= delta;
-          break;
-        case 'ArrowDown':
-          coordY += delta;
-          break;
-        case 'ArrowLeft':
-          coordX -= delta;
-          break;
-        case 'ArrowRight':
-          coordX += delta;
-          break;
-      }
+  void onVerticalDragUpdate(DragUpdateDetails details) {
+    this.handler.handleDragEvent(Direction.vertical, details);
+  }
 
-      coordX = max(coordX, 0);
-      coordY = max(coordY, 0);
-      player.move(new Coords(coordX, coordY));
-    }
+  void onDrag(DragUpdateDetails event) {
+    print(event);
   }
 
   bool checkIntersection(Coords coords) {

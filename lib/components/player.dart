@@ -5,11 +5,11 @@ import 'package:flutter/cupertino.dart';
 class Player {
   final GameController controller;
 
-  double _playerSize;
+  double _size;
   double _speed;
 
-  int maxHealth;
-  int currHealth;
+  double maxHealth;
+  double currHealth;
 
   Rect playerRect;
   bool isDead = false;
@@ -17,17 +17,12 @@ class Player {
   Coords coords;
 
   Player(this.controller) {
-    maxHealth = currHealth = 100;
-    _playerSize = controller.tileSize * 1.5;
+    maxHealth = currHealth = 100.0;
+    _size = controller.tileSize * 1.0;
     _speed = controller.tileSize * 0.5;
 
     Coords coords = controller.getRandomCoords();
-    adjustBounds(coords, _playerSize);
-
-    playerRect =
-        Rect.fromLTWH(coords.getX(), coords.getY(), _playerSize, _playerSize);
-
-    this.coords = coords;
+    move(coords);
   }
 
   void adjustBounds(Coords coords, double playerSize) {
@@ -49,9 +44,8 @@ class Player {
   }
 
   void move(Coords coords) {
-    adjustBounds(coords, this._playerSize);
-    playerRect =
-        Rect.fromLTWH(coords.getX(), coords.getY(), _playerSize, _playerSize);
+    adjustBounds(coords, this._size);
+    playerRect = Rect.fromLTWH(coords.getX(), coords.getY(), _size, _size);
     this.coords = coords;
   }
 
