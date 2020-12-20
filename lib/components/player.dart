@@ -58,13 +58,16 @@ class Player {
     Paint playerPaint = Paint()..color = Color(Constants.playerColor);
     canvas.drawRect(playerRect, playerPaint);
 
-    double lifeIconXPos =
-        this.controller.screenSize.width - Constants.iconOffset;
-    double lifeIconYPos = Constants.iconOffset.toDouble();
-    for (int i = 0; i < this.livesLeft; i++) {
-      canvas.drawImage(
-          this.lifeIcon, new Offset(lifeIconXPos, lifeIconYPos), Paint());
-      lifeIconXPos -= 56 + Constants.iconOffset * 2;
+    if (this.lifeIcon != null) {
+      double lifeIconXPos = this.controller.screenSize.width -
+          Constants.iconOffset -
+          Constants.iconSize;
+      double lifeIconYPos = Constants.iconOffset.toDouble();
+      for (int i = 0; i < this.livesLeft; i++) {
+        canvas.drawImage(
+            this.lifeIcon, new Offset(lifeIconXPos, lifeIconYPos), Paint());
+        lifeIconXPos -= lifeIcon.width + Constants.iconOffset * 2;
+      }
     }
   }
 

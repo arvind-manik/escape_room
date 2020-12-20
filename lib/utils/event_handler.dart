@@ -1,7 +1,4 @@
-import 'dart:math';
-
 import 'package:escape_room/components/coords.dart';
-import 'package:escape_room/components/player.dart';
 import 'package:escape_room/game_controller.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/services.dart';
@@ -15,25 +12,23 @@ class EventHandler {
 
   EventHandler(this.controller);
 
-  void handleMovement(PlayerMovement movement) {
+  void handleMovement(PlayerMovement movement, Offset offset) {
     Coords coords = this.controller.player.getCoords();
     double coordX = coords.getX();
     double coordY = coords.getY();
 
-    double delta = this.controller.player.getSpeed();
-
     switch (movement) {
       case PlayerMovement.up:
-        coordY -= delta;
+        coordY -= offset.dy;
         break;
       case PlayerMovement.down:
-        coordY += delta;
+        coordY += offset.dy;
         break;
       case PlayerMovement.left:
-        coordX -= delta;
+        coordX -= offset.dx;
         break;
       case PlayerMovement.right:
-        coordX += delta;
+        coordX += offset.dy;
     }
 
     this.controller.player.move(new Coords(coordX, coordY));
@@ -59,7 +54,16 @@ class EventHandler {
           break;
       }
 
-      handleMovement(movement);
+      double dx =
+          movement == PlayerMovement.left || movement == PlayerMovement.right
+              ? this.controller.player.getSpeed()
+              : 0.0;
+      double dy =
+          movement == PlayerMovement.up || movement == PlayerMovement.down
+              ? this.controller.player.getSpeed()
+              : 0.0;
+
+      handleMovement(movement, new Offset(dx, dy));
     }
   }
 
@@ -72,6 +76,13 @@ class EventHandler {
       movement = details.delta.dy > 0 ? PlayerMovement.down : PlayerMovement.up;
     }
 
-    handleMovement(movement);
+    if (movement != null) {
+      double multiplier =
+          this.controller.player.getSpeed() * this.controller.tileSize;
+      handleMovement(
+          movement,
+          new Offset(details.delta.dx.abs() * multiplier,
+              details.delta.dy.abs() * multiplier));
+    }
   }
 }

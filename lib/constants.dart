@@ -9,6 +9,8 @@ class Constants {
   static final double enemySizeFactor = 1.0;
 
   static final int touchDebounceTime = 50;
+  static final int attackDebounceTime = 300;
+
   static final int iconOffset = 5;
   static final int iconSize = 20;
 

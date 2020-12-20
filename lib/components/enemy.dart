@@ -1,6 +1,7 @@
 import 'package:escape_room/components/coords.dart';
 import 'package:escape_room/constants.dart';
 import 'package:escape_room/game_controller.dart';
+import 'package:escape_room/utils/debouncer.dart';
 import 'package:flutter/cupertino.dart';
 
 class Enemy {
@@ -52,7 +53,12 @@ class Enemy {
           Offset.fromDirection(toPlayer.direction, stepDistance);
       this.enemyRect = this.enemyRect.shift(stepToPlayer);
     } else {
-      this.controller.player.livesLeft--;
+      attack();
     }
+  }
+
+  Debouncer _attackDeboucer = Debouncer(Constants.attackDebounceTime);
+  void attack() {
+    _attackDeboucer.run(() => this.controller.player.livesLeft--);
   }
 }
