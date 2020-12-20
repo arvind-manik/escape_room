@@ -67,7 +67,7 @@ class GameController extends Game with KeyboardEvents {
   final _dragDebouncer = Debouncer(Constants.touchDebounceTime);
   void onDrag(DragUpdateDetails details) {
     if (this.player.isDead) {
-      return;
+      init();
     }
 
     Direction direction = details.delta.dx.abs() > details.delta.dy.abs()

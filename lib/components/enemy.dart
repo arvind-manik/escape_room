@@ -47,7 +47,7 @@ class Enemy {
   void update(double delta) {
     double stepDistance = this._speed * delta;
     Offset toPlayer =
-        this.controller.player.playerRect.center - enemyRect.center;
+        this.controller.player.playerRect.center - this.enemyRect.center;
     if (stepDistance <= toPlayer.distance - this.controller.tileSize * 0.8) {
       Offset stepToPlayer =
           Offset.fromDirection(toPlayer.direction, stepDistance);

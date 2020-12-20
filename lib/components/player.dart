@@ -38,15 +38,17 @@ class Player {
     this.lifeIcon = await Util.loadAsset(Constants.heartIcon);
   }
 
-  void handleWrap(Coords coords, double playerSize) {
+  void handleWrap(
+    Coords coords,
+  ) {
     Size screenSize = this.controller.screenSize;
-    if (coords.getX() + playerSize > screenSize.width) {
-      double overflowX = coords.getX() + playerSize - screenSize.width;
+    if (coords.getX() + _size > screenSize.width) {
+      double overflowX = coords.getX() + _size - screenSize.width;
       coords.setX(coords.getX() - overflowX);
     }
 
-    if (coords.getY() + playerSize > screenSize.height) {
-      double overflowY = coords.getY() + playerSize - screenSize.height;
+    if (coords.getY() + _size > screenSize.height) {
+      double overflowY = coords.getY() + _size - screenSize.height;
       coords.setY(coords.getY() - overflowY);
     }
 
@@ -73,17 +75,11 @@ class Player {
 
   void move(Coords coords) {
     this.isDead = false;
-    handleWrap(coords, this._size);
+    handleWrap(coords);
     if (this.playerRect == null) {
       this.playerRect =
           Rect.fromLTWH(coords.getX(), coords.getY(), this._size, this._size);
     }
-
-    Offset movementOffset =
-        Offset(coords.getX(), coords.getY()) - this.playerRect.center;
-    Offset newPositionOffset =
-        Offset.fromDirection(movementOffset.direction, this._speed);
-    this.playerRect = this.playerRect.shift(newPositionOffset);
 
     this.coords = coords;
 
@@ -108,7 +104,15 @@ class Player {
     if (!this.isDead && this.livesLeft <= 0) {
       this.isDead = true;
       print('Welp! You\'re dead');
+      return;
     }
+
+    double stepDistance = this._speed * delta;
+    handleWrap(this.coords);
+    Offset stepOffset = this.coords.toOffset() - this.playerRect.center;
+    Offset stepToNewPosition =
+        Offset.fromDirection(stepOffset.direction, stepDistance);
+    this.playerRect = this.playerRect.shift(stepToNewPosition);
   }
 
   Coords getCoords() {

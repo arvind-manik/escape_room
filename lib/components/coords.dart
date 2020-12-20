@@ -1,3 +1,5 @@
+import 'package:flutter/cupertino.dart';
+
 class Coords {
   double _x;
   double _y;
@@ -18,6 +20,10 @@ class Coords {
 
   void setY(double y) {
     this._y = y;
+  }
+
+  Offset toOffset() {
+    return new Offset(this._x, this._y);
   }
 
   @override
