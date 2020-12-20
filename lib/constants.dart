@@ -1,6 +1,6 @@
 class Constants {
   //General
-  static final double playerHealth = 100.0;
+  static final int playerLives = 3;
   static final double minTileSize = 50.0;
   static final double spawnTileBuffer = 5;
   static final double playerSpeedFactor = 0.5;
@@ -9,9 +9,14 @@ class Constants {
   static final double enemySizeFactor = 1.0;
 
   static final int touchDebounceTime = 50;
+  static final int iconOffset = 5;
+  static final int iconSize = 20;
 
   //Colors
   static final int backgroundColor = 0xFFFAFAFA;
   static final int playerColor = 0xFF0000FF;
   static final int enemyColor = 0xFFFF4500;
+
+  //Icons
+  static final String heartIcon = 'assets/icons/heart.png';
 }

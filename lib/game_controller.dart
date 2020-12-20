@@ -10,6 +10,7 @@ import 'package:flame/flame.dart';
 import 'package:flame/game.dart';
 import 'package:flame/keyboard.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/services.dart';
 
 class GameController extends Game with KeyboardEvents {
   Size screenSize;
@@ -34,11 +35,12 @@ class GameController extends Game with KeyboardEvents {
   }
 
   @override
-  void render(Canvas canvas) {
-    Rect bg = Rect.fromLTWH(0, 0, screenSize.width, screenSize.height);
-    Paint bgPaint = Paint()..color = Color(Constants.backgroundColor);
+  void render(Canvas canvas) async {
+    Rect backgroundRect =
+        Rect.fromLTWH(0, 0, screenSize.width, screenSize.height);
+    Paint backgroundPaint = Paint()..color = Color(Constants.backgroundColor);
 
-    canvas.drawRect(bg, bgPaint);
+    canvas.drawRect(backgroundRect, backgroundPaint);
 
     player.render(canvas);
     enemy.render(canvas);

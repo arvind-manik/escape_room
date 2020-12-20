@@ -1,0 +1,1 @@
+enum GameEvent { PLAYER_MOVEMENT, GAME_OVER }

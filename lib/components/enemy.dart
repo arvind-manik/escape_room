@@ -52,7 +52,7 @@ class Enemy {
           Offset.fromDirection(toPlayer.direction, stepDistance);
       this.enemyRect = this.enemyRect.shift(stepToPlayer);
     } else {
-      this.controller.player.kill();
+      this.controller.player.livesLeft--;
     }
   }
 }

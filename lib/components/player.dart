@@ -1,9 +1,11 @@
 import 'dart:math';
+import 'dart:ui' as ui;
 
 import 'package:escape_room/components/coords.dart';
-import 'package:escape_room/components/game_event.dart';
 import 'package:escape_room/constants.dart';
 import 'package:escape_room/game_controller.dart';
+import 'package:escape_room/game_event.dart';
+import 'package:escape_room/utils/util.dart';
 import 'package:flutter/cupertino.dart';
 
 class Player {
@@ -12,8 +14,7 @@ class Player {
   double _size;
   double _speed;
 
-  double maxHealth;
-  double currHealth;
+  int livesLeft;
 
   Rect playerRect;
   bool isDead = false;
@@ -21,13 +22,20 @@ class Player {
   Coords coords;
   final listeners = {};
 
+  ui.Image lifeIcon;
+
   Player(this.controller) {
-    maxHealth = currHealth = Constants.playerHealth;
+    livesLeft = Constants.playerLives;
     _size = controller.tileSize * Constants.playerSizeFactor;
     _speed = controller.tileSize * Constants.playerSpeedFactor;
 
     Coords coords = controller.getRandomCoords();
+    loadAssets();
     move(coords);
+  }
+
+  loadAssets() async {
+    this.lifeIcon = await Util.loadAsset(Constants.heartIcon);
   }
 
   void handleWrap(Coords coords, double playerSize) {
@@ -46,9 +54,18 @@ class Player {
     coords.setY(max(coords.getY(), 0));
   }
 
-  void render(Canvas canvas) {
+  void render(Canvas canvas) async {
     Paint playerPaint = Paint()..color = Color(Constants.playerColor);
     canvas.drawRect(playerRect, playerPaint);
+
+    double lifeIconXPos =
+        this.controller.screenSize.width - Constants.iconOffset;
+    double lifeIconYPos = Constants.iconOffset.toDouble();
+    for (int i = 0; i < this.livesLeft; i++) {
+      canvas.drawImage(
+          this.lifeIcon, new Offset(lifeIconXPos, lifeIconYPos), Paint());
+      lifeIconXPos -= 56 + Constants.iconOffset * 2;
+    }
   }
 
   void move(Coords coords) {
@@ -67,7 +84,7 @@ class Player {
 
     this.coords = coords;
 
-    List movementListeners = this.listeners[Event.PLAYER_MOVEMENT];
+    List movementListeners = this.listeners[GameEvent.PLAYER_MOVEMENT];
     if (movementListeners != null) {
       for (Function function in movementListeners) {
         function.call(this.coords);
@@ -76,22 +93,20 @@ class Player {
   }
 
   void subscribeToMovement(Function listener) {
-    List movementListeners = this.listeners[Event.PLAYER_MOVEMENT];
+    List movementListeners = this.listeners[GameEvent.PLAYER_MOVEMENT];
     if (movementListeners == null) {
-      movementListeners = this.listeners[Event.PLAYER_MOVEMENT] = [];
+      movementListeners = this.listeners[GameEvent.PLAYER_MOVEMENT] = [];
     }
 
     movementListeners.add(listener);
   }
 
-  void kill() {
-    if (!this.isDead) {
+  void update(double delta) async {
+    if (!this.isDead && this.livesLeft <= 0) {
       this.isDead = true;
       print('Welp! You\'re dead');
     }
   }
-
-  void update(double delta) {}
 
   Coords getCoords() {
     return this.coords;
