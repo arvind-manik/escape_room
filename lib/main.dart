@@ -15,7 +15,9 @@ void main() async {
 
   HorizontalDragGestureRecognizer draggerH = HorizontalDragGestureRecognizer();
   draggerH.onUpdate = controller.onHorizontalDragUpdate;
+  flameUtil.addGestureRecognizer(draggerH);
 
   VerticalDragGestureRecognizer draggerV = VerticalDragGestureRecognizer();
   draggerV.onUpdate = controller.onVerticalDragUpdate;
+  flameUtil.addGestureRecognizer(draggerV);
 }

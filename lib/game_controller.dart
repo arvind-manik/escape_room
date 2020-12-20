@@ -2,6 +2,7 @@ import 'dart:math';
 
 import 'package:escape_room/components/coords.dart';
 import 'package:escape_room/components/player.dart';
+import 'package:escape_room/constants.dart';
 import 'package:escape_room/utils/event_handler.dart';
 import 'package:flame/flame.dart';
 import 'package:flame/game.dart';
@@ -13,8 +14,6 @@ class GameController extends Game with KeyboardEvents {
   double tileSize;
 
   Player player;
-
-  static final double _minTileSize = 50.0;
 
   static final Random random = Random();
   EventHandler handler;
@@ -46,7 +45,7 @@ class GameController extends Game with KeyboardEvents {
   @override
   void resize(Size size) {
     this.screenSize = size;
-    this.tileSize = min(screenSize.width / 10, _minTileSize);
+    this.tileSize = min(screenSize.width / 10, Constants.minTileSize);
   }
 
   @override
@@ -62,8 +61,8 @@ class GameController extends Game with KeyboardEvents {
     this.handler.handleDragEvent(Direction.vertical, details);
   }
 
-  void onDrag(DragUpdateDetails event) {
-    print(event);
+  void onTapDown(TapDownDetails details) {
+    print(details);
   }
 
   bool checkIntersection(Coords coords) {
