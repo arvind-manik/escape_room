@@ -13,11 +13,7 @@ void main() async {
   GameController controller = GameController();
   runApp(controller.widget);
 
-  HorizontalDragGestureRecognizer draggerH = HorizontalDragGestureRecognizer();
-  draggerH.onUpdate = controller.onHorizontalDragUpdate;
-  flameUtil.addGestureRecognizer(draggerH);
-
-  VerticalDragGestureRecognizer draggerV = VerticalDragGestureRecognizer();
-  draggerV.onUpdate = controller.onVerticalDragUpdate;
-  flameUtil.addGestureRecognizer(draggerV);
+  PanGestureRecognizer gestureRecognizer = PanGestureRecognizer();
+  gestureRecognizer.onUpdate = controller.onDrag;
+  flameUtil.addGestureRecognizer(gestureRecognizer);
 }

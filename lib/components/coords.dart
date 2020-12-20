@@ -19,4 +19,7 @@ class Coords {
   void setY(double y) {
     this._y = y;
   }
+
+  @override
+  String toString() => "${this._x}, ${this._y}";
 }

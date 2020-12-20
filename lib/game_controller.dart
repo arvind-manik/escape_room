@@ -1,8 +1,10 @@
 import 'dart:math';
 
 import 'package:escape_room/components/coords.dart';
+import 'package:escape_room/components/enemy.dart';
 import 'package:escape_room/components/player.dart';
 import 'package:escape_room/constants.dart';
+import 'package:escape_room/utils/debouncer.dart';
 import 'package:escape_room/utils/event_handler.dart';
 import 'package:flame/flame.dart';
 import 'package:flame/game.dart';
@@ -14,6 +16,7 @@ class GameController extends Game with KeyboardEvents {
   double tileSize;
 
   Player player;
+  Enemy enemy;
 
   static final Random random = Random();
   EventHandler handler;
@@ -26,17 +29,19 @@ class GameController extends Game with KeyboardEvents {
     resize(await Flame.util.initialDimensions());
     this.handler = EventHandler(this);
     this.player = new Player(this);
+    this.enemy = Enemy(this);
     print(this.screenSize);
   }
 
   @override
   void render(Canvas canvas) {
     Rect bg = Rect.fromLTWH(0, 0, screenSize.width, screenSize.height);
-    Paint bgPaint = Paint()..color = Color(0xFFFAFAFA);
+    Paint bgPaint = Paint()..color = Color(Constants.backgroundColor);
 
     canvas.drawRect(bg, bgPaint);
 
     player.render(canvas);
+    enemy.render(canvas);
   }
 
   @override
@@ -45,7 +50,8 @@ class GameController extends Game with KeyboardEvents {
   @override
   void resize(Size size) {
     this.screenSize = size;
-    this.tileSize = min(screenSize.width / 10, Constants.minTileSize);
+    this.tileSize =
+        min(screenSize.width / 10, Constants.minTileSize).roundToDouble();
   }
 
   @override
@@ -53,20 +59,19 @@ class GameController extends Game with KeyboardEvents {
     handler.handleKeyboardEvent(event);
   }
 
-  void onHorizontalDragUpdate(DragUpdateDetails details) {
-    this.handler.handleDragEvent(Direction.horizontal, details);
-  }
+  final _dragDebouncer = Debouncer(Constants.touchDebounceTime);
+  void onDrag(DragUpdateDetails details) {
+    Direction direction = details.delta.dx.abs() > details.delta.dy.abs()
+        ? Direction.horizontal
+        : Direction.vertical;
 
-  void onVerticalDragUpdate(DragUpdateDetails details) {
-    this.handler.handleDragEvent(Direction.vertical, details);
-  }
-
-  void onTapDown(TapDownDetails details) {
-    print(details);
+    _dragDebouncer.run(() => this.handler.handleDragEvent(direction, details));
   }
 
   bool checkIntersection(Coords coords) {
-    return false;
+    Coords playerCoords = this.player.getCoords();
+    return playerCoords.getX() == coords.getX() &&
+        playerCoords.getY() == coords.getY();
   }
 
   Coords getRandomCoords() {

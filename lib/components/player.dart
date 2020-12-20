@@ -1,4 +1,8 @@
+import 'dart:math';
+
 import 'package:escape_room/components/coords.dart';
+import 'package:escape_room/components/game_event.dart';
+import 'package:escape_room/constants.dart';
 import 'package:escape_room/game_controller.dart';
 import 'package:flutter/cupertino.dart';
 
@@ -15,17 +19,18 @@ class Player {
   bool isDead = false;
 
   Coords coords;
+  final listeners = {};
 
   Player(this.controller) {
-    maxHealth = currHealth = 100.0;
-    _size = controller.tileSize * 1.0;
-    _speed = controller.tileSize * 0.5;
+    maxHealth = currHealth = Constants.playerHealth;
+    _size = controller.tileSize * Constants.playerSizeFactor;
+    _speed = controller.tileSize * Constants.playerSpeedFactor;
 
     Coords coords = controller.getRandomCoords();
     move(coords);
   }
 
-  void adjustBounds(Coords coords, double playerSize) {
+  void handleWrap(Coords coords, double playerSize) {
     Size screenSize = this.controller.screenSize;
     if (coords.getX() + playerSize > screenSize.width) {
       double overflowX = coords.getX() + playerSize - screenSize.width;
@@ -36,17 +41,36 @@ class Player {
       double overflowY = coords.getY() + playerSize - screenSize.height;
       coords.setY(coords.getY() - overflowY);
     }
+
+    coords.setX(max(coords.getX(), 0));
+    coords.setY(max(coords.getY(), 0));
   }
 
   void render(Canvas canvas) {
-    Paint playerPaint = Paint()..color = Color(0xFF0000FF);
+    Paint playerPaint = Paint()..color = Color(Constants.playerColor);
     canvas.drawRect(playerRect, playerPaint);
   }
 
   void move(Coords coords) {
-    adjustBounds(coords, this._size);
+    handleWrap(coords, this._size);
     playerRect = Rect.fromLTWH(coords.getX(), coords.getY(), _size, _size);
     this.coords = coords;
+
+    List movementListeners = this.listeners[Event.PLAYER_MOVEMENT];
+    if (movementListeners != null) {
+      for (Function function in movementListeners) {
+        function.call(this.coords);
+      }
+    }
+  }
+
+  void subscribeToMovement(Function listener) {
+    List movementListeners = this.listeners[Event.PLAYER_MOVEMENT];
+    if (movementListeners == null) {
+      movementListeners = this.listeners[Event.PLAYER_MOVEMENT] = [];
+    }
+
+    movementListeners.add(listener);
   }
 
   void update(double delta) {}
