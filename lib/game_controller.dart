@@ -45,7 +45,10 @@ class GameController extends Game with KeyboardEvents {
   }
 
   @override
-  void update(double delta) {}
+  void update(double delta) {
+    this.player.update(delta);
+    this.enemy.update(delta);
+  }
 
   @override
   void resize(Size size) {
@@ -61,6 +64,10 @@ class GameController extends Game with KeyboardEvents {
 
   final _dragDebouncer = Debouncer(Constants.touchDebounceTime);
   void onDrag(DragUpdateDetails details) {
+    if (this.player.isDead) {
+      return;
+    }
+
     Direction direction = details.delta.dx.abs() > details.delta.dy.abs()
         ? Direction.horizontal
         : Direction.vertical;

@@ -52,8 +52,19 @@ class Player {
   }
 
   void move(Coords coords) {
+    this.isDead = false;
     handleWrap(coords, this._size);
-    playerRect = Rect.fromLTWH(coords.getX(), coords.getY(), _size, _size);
+    if (this.playerRect == null) {
+      this.playerRect =
+          Rect.fromLTWH(coords.getX(), coords.getY(), this._size, this._size);
+    }
+
+    Offset movementOffset =
+        Offset(coords.getX(), coords.getY()) - this.playerRect.center;
+    Offset newPositionOffset =
+        Offset.fromDirection(movementOffset.direction, this._speed);
+    this.playerRect = this.playerRect.shift(newPositionOffset);
+
     this.coords = coords;
 
     List movementListeners = this.listeners[Event.PLAYER_MOVEMENT];
@@ -71,6 +82,13 @@ class Player {
     }
 
     movementListeners.add(listener);
+  }
+
+  void kill() {
+    if (!this.isDead) {
+      this.isDead = true;
+      print('Welp! You\'re dead');
+    }
   }
 
   void update(double delta) {}

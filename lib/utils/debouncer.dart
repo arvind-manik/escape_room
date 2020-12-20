@@ -1,6 +1,5 @@
 import 'package:flutter/foundation.dart';
 import 'package:escape_room/utils/util.dart';
-import 'dart:async';
 
 ///
 /// Taken as reference from
@@ -9,20 +8,16 @@ import 'dart:async';
 
 class Debouncer {
   final int milliseconds;
-  VoidCallback action;
-  Timer _timer;
 
-  int lastEventTime;
+  int lastEventTime = Util.getCurrentTime();
 
   Debouncer(this.milliseconds);
 
   run(VoidCallback action) {
     int now = Util.getCurrentTime();
-    if (_timer != null && now - lastEventTime > this.milliseconds) {
-      _timer.cancel();
+    if (now - lastEventTime > this.milliseconds) {
+      lastEventTime = now;
+      action();
     }
-
-    lastEventTime = now;
-    _timer = Timer(Duration(milliseconds: this.milliseconds), action);
   }
 }

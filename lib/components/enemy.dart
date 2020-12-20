@@ -18,7 +18,7 @@ class Enemy {
     this.coords = getCoords();
     enemyRect =
         Rect.fromLTWH(coords.getX(), coords.getY(), this._size, this._size);
-    this.controller.player.subscribeToMovement((coords) => {print(coords)});
+    this.controller.player.subscribeToMovement((coords) => {});
   }
 
   Coords getCoords() {
@@ -43,5 +43,16 @@ class Enemy {
     canvas.drawRect(this.enemyRect, enemyColor);
   }
 
-  void update(double delta) {}
+  void update(double delta) {
+    double stepDistance = this._speed * delta;
+    Offset toPlayer =
+        this.controller.player.playerRect.center - enemyRect.center;
+    if (stepDistance <= toPlayer.distance - this.controller.tileSize * 0.8) {
+      Offset stepToPlayer =
+          Offset.fromDirection(toPlayer.direction, stepDistance);
+      this.enemyRect = this.enemyRect.shift(stepToPlayer);
+    } else {
+      this.controller.player.kill();
+    }
+  }
 }

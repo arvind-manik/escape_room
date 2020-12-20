@@ -5,10 +5,10 @@ class Constants {
   static final double spawnTileBuffer = 5;
   static final double playerSpeedFactor = 0.5;
   static final double playerSizeFactor = 1.0;
-  static final double enemySpeedFactor = 0.25;
+  static final double enemySpeedFactor = 3.0;
   static final double enemySizeFactor = 1.0;
 
-  static final int touchDebounceTime = 20;
+  static final int touchDebounceTime = 50;
 
   //Colors
   static final int backgroundColor = 0xFFFAFAFA;
