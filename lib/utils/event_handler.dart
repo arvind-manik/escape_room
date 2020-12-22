@@ -28,7 +28,7 @@ class EventHandler {
         coordX -= offset.dx;
         break;
       case PlayerMovement.right:
-        coordX += offset.dy;
+        coordX += offset.dx;
     }
 
     this.controller.player.move(new Coords(coordX, coordY));

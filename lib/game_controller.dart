@@ -48,6 +48,10 @@ class GameController extends Game with KeyboardEvents {
 
   @override
   void update(double delta) {
+    if (this.player.isDead) {
+      return;
+    }
+
     this.player.update(delta);
     this.enemy.update(delta);
   }
@@ -61,6 +65,10 @@ class GameController extends Game with KeyboardEvents {
 
   @override
   void onKeyEvent(RawKeyEvent event) {
+    if (this.player.isDead) {
+      init();
+    }
+
     handler.handleKeyboardEvent(event);
   }
 

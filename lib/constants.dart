@@ -3,7 +3,7 @@ class Constants {
   static final int playerLives = 3;
   static final double minTileSize = 50.0;
   static final double spawnTileBuffer = 5;
-  static final double playerSpeedFactor = 3.5;
+  static final double playerSpeedFactor = 4.0;
   static final double playerSizeFactor = 1.0;
   static final double enemySpeedFactor = 3.0;
   static final double enemySizeFactor = 1.0;

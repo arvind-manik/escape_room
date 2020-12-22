@@ -38,9 +38,7 @@ class Player {
     this.lifeIcon = await Util.loadAsset(Constants.heartIcon);
   }
 
-  void handleWrap(
-    Coords coords,
-  ) {
+  void handleWrap(Coords coords) {
     Size screenSize = this.controller.screenSize;
     if (coords.getX() + _size > screenSize.width) {
       double overflowX = coords.getX() + _size - screenSize.width;
@@ -96,7 +94,6 @@ class Player {
     if (movementListeners == null) {
       movementListeners = this.listeners[GameEvent.PLAYER_MOVEMENT] = [];
     }
-
     movementListeners.add(listener);
   }
 
