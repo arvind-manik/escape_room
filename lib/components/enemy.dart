@@ -13,19 +13,37 @@ class Enemy {
   Rect enemyRect;
   Coords coords;
 
-  Enemy(this.controller) {
+  Enemy(this.controller, Direction direction) {
     this._size = this.controller.tileSize * Constants.enemySizeFactor;
     this._speed = this.controller.tileSize * Constants.enemySpeedFactor;
-    this.coords = getCoords();
+    this.coords = getCoords(direction);
     enemyRect =
         Rect.fromLTWH(coords.getX(), coords.getY(), this._size, this._size);
     this.controller.player.subscribeToMovement((coords) => {});
   }
 
-  Coords getCoords() {
-    Coords coords = this.controller.getRandomCoords();
+  Coords getCoords(Direction direction) {
+    Coords coords = this.controller.getRandomCoords(this._size);
+
+    //Overriding to spawn outside screen
+    switch (direction) {
+      case Direction.WEST:
+        coords.setX(0 - this._size * Constants.spawnTileBuffer);
+        break;
+      case Direction.NORTH:
+        coords.setY(0 - this._size * Constants.spawnTileBuffer);
+        break;
+      case Direction.EAST:
+        coords.setX(this.controller.screenSize.width +
+            this._size * Constants.spawnTileBuffer);
+        break;
+      case Direction.SOUTH:
+        coords.setY(this.controller.screenSize.height +
+            this._size * Constants.spawnTileBuffer);
+    }
+
     while (isInvalidSpawnPoint(coords)) {
-      coords = getCoords();
+      coords = getCoords(direction);
     }
 
     return coords;
@@ -34,9 +52,9 @@ class Enemy {
   bool isInvalidSpawnPoint(Coords coords) {
     Coords playerCoords = this.controller.player.getCoords();
     return ((coords.getX() - playerCoords.getX()).abs() <
-            Constants.spawnTileBuffer) &&
+            Constants.spawnKillAvoidBuffer) &&
         ((coords.getY() - playerCoords.getY()).abs() <
-            Constants.spawnTileBuffer);
+            Constants.spawnKillAvoidBuffer);
   }
 
   void render(Canvas canvas) {

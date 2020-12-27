@@ -1,88 +1,63 @@
 import 'package:escape_room/components/coords.dart';
+import 'package:escape_room/constants.dart';
 import 'package:escape_room/game_controller.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/services.dart';
 
-enum PlayerMovement { up, down, left, right }
-enum Direction { horizontal, vertical }
-
 class EventHandler {
-  Map<PlayerMovement, Function> eventSubscibers = Map();
   GameController controller;
 
   EventHandler(this.controller);
 
-  void handleMovement(PlayerMovement movement, Offset offset) {
+  void handleMovement(Offset offset) {
     Coords coords = this.controller.player.getCoords();
     double coordX = coords.getX();
     double coordY = coords.getY();
 
-    switch (movement) {
-      case PlayerMovement.up:
-        coordY -= offset.dy;
-        break;
-      case PlayerMovement.down:
-        coordY += offset.dy;
-        break;
-      case PlayerMovement.left:
-        coordX -= offset.dx;
-        break;
-      case PlayerMovement.right:
-        coordX += offset.dx;
-    }
-
-    this.controller.player.move(new Coords(coordX, coordY));
+    this
+        .controller
+        .player
+        .move(new Coords(coordX + offset.dx, coordY + offset.dy));
   }
 
   void handleKeyboardEvent(RawKeyEvent event) {
     final bool isKeyDown = event is RawKeyDownEvent;
+    double dx, dy;
+    double playerSpeed = this.controller.player.getSpeed();
+
     if (isKeyDown) {
-      PlayerMovement movement;
       String code = event.data.keyLabel;
       switch (code) {
         case 'ArrowUp':
-          movement = PlayerMovement.up;
+          dy = playerSpeed;
           break;
         case 'ArrowDown':
-          movement = PlayerMovement.down;
+          dy = -playerSpeed;
           break;
         case 'ArrowLeft':
-          movement = PlayerMovement.left;
+          dx = -playerSpeed;
           break;
         case 'ArrowRight':
-          movement = PlayerMovement.right;
+          dx = playerSpeed;
           break;
       }
 
-      double dx =
-          movement == PlayerMovement.left || movement == PlayerMovement.right
-              ? this.controller.player.getSpeed()
-              : 0.0;
-      double dy =
-          movement == PlayerMovement.up || movement == PlayerMovement.down
-              ? this.controller.player.getSpeed()
-              : 0.0;
-
-      handleMovement(movement, new Offset(dx, dy));
+      handleMovement(new Offset(dx, dy));
     }
   }
 
-  void handleDragEvent(Direction direction, DragUpdateDetails details) {
-    PlayerMovement movement;
-    if (direction == Direction.horizontal) {
-      movement =
-          details.delta.dx > 0 ? PlayerMovement.right : PlayerMovement.left;
-    } else if (direction == Direction.vertical) {
-      movement = details.delta.dy > 0 ? PlayerMovement.down : PlayerMovement.up;
+  void handleDragEvent(Axis direction, DragUpdateDetails details) {
+    double xMultipler, yMultipler;
+    xMultipler = yMultipler = 1.0;
+    double playerSpeed = this.controller.player.getSpeed();
+
+    if (direction == Axis.horizontal) {
+      xMultipler = playerSpeed;
+    } else if (direction == Axis.vertical) {
+      yMultipler = playerSpeed;
     }
 
-    if (movement != null) {
-      double multiplier =
-          this.controller.player.getSpeed() * this.controller.tileSize;
-      handleMovement(
-          movement,
-          new Offset(details.delta.dx.abs() * multiplier,
-              details.delta.dy.abs() * multiplier));
-    }
+    handleMovement(new Offset(
+        details.delta.dx * xMultipler, details.delta.dy * yMultipler));
   }
 }

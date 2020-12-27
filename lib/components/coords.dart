@@ -26,6 +26,21 @@ class Coords {
     return new Offset(this._x, this._y);
   }
 
+  static Coords fromOffset(Offset offset) {
+    return Coords(offset.dx, offset.dy);
+  }
+
+  static Coords applyOffset(Coords coords, Offset offset) {
+    double xPos = coords.getX() + offset.dx;
+    double yPos = coords.getY() + offset.dy;
+
+    return Coords(xPos, yPos);
+  }
+
+  Coords clone() {
+    return new Coords(this._x, this._y);
+  }
+
   @override
   String toString() => "${this._x}, ${this._y}";
 }

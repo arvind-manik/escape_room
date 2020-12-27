@@ -1,10 +1,8 @@
-import 'dart:math';
 import 'dart:ui' as ui;
 
 import 'package:escape_room/components/coords.dart';
 import 'package:escape_room/constants.dart';
 import 'package:escape_room/game_controller.dart';
-import 'package:escape_room/game_event.dart';
 import 'package:escape_room/utils/util.dart';
 import 'package:flutter/cupertino.dart';
 
@@ -19,7 +17,7 @@ class Player {
   Rect playerRect;
   bool isDead = false;
 
-  Coords coords;
+  Coords targetCoords;
   final listeners = {};
 
   ui.Image lifeIcon;
@@ -29,29 +27,18 @@ class Player {
     _size = controller.tileSize * Constants.playerSizeFactor;
     _speed = controller.tileSize * Constants.playerSpeedFactor;
 
-    Coords coords = controller.getRandomCoords();
+    Coords coords = controller.getRandomCoords(_getRadius());
     loadAssets();
     move(coords);
   }
 
+  _getRadius() => this._size / 2;
+
+  Coords getCoords() => this.targetCoords;
+
   loadAssets() async {
-    this.lifeIcon = await Util.loadAsset(Constants.heartIcon);
-  }
-
-  void handleWrap(Coords coords) {
-    Size screenSize = this.controller.screenSize;
-    if (coords.getX() + _size > screenSize.width) {
-      double overflowX = coords.getX() + _size - screenSize.width;
-      coords.setX(coords.getX() - overflowX);
-    }
-
-    if (coords.getY() + _size > screenSize.height) {
-      double overflowY = coords.getY() + _size - screenSize.height;
-      coords.setY(coords.getY() - overflowY);
-    }
-
-    coords.setX(max(coords.getX(), 0));
-    coords.setY(max(coords.getY(), 0));
+    this.lifeIcon = await Util.loadAsset(
+        Constants.heartIcon, Constants.iconSize, Constants.iconSize);
   }
 
   void render(Canvas canvas) async {
@@ -73,18 +60,18 @@ class Player {
 
   void move(Coords coords) {
     this.isDead = false;
-    handleWrap(coords);
     if (this.playerRect == null) {
       this.playerRect =
           Rect.fromLTWH(coords.getX(), coords.getY(), this._size, this._size);
     }
 
-    this.coords = coords;
+    this.controller.handleWrap(coords, _getRadius());
+    this.targetCoords = coords;
 
     List movementListeners = this.listeners[GameEvent.PLAYER_MOVEMENT];
     if (movementListeners != null) {
       for (Function function in movementListeners) {
-        function.call(this.coords);
+        function.call(this.targetCoords);
       }
     }
   }
@@ -105,15 +92,13 @@ class Player {
     }
 
     double stepDistance = this._speed * delta;
-    handleWrap(this.coords);
-    Offset stepOffset = this.coords.toOffset() - this.playerRect.center;
+    this.controller.handleWrap(this.targetCoords, _getRadius());
+    Offset stepOffset = this.targetCoords.toOffset() - this.playerRect.center;
+
+    Coords newCoords = Coords.applyOffset(this.targetCoords, stepOffset);
     Offset stepToNewPosition =
         Offset.fromDirection(stepOffset.direction, stepDistance);
     this.playerRect = this.playerRect.shift(stepToNewPosition);
-  }
-
-  Coords getCoords() {
-    return this.coords;
   }
 
   double getSpeed() {
