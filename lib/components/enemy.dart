@@ -13,6 +13,10 @@ class Enemy {
   Rect enemyRect;
   Coords coords;
 
+  bool isDead = false;
+
+  double health = Constants.enemyHealth;
+
   Enemy(this.controller, Direction direction) {
     this._size = this.controller.tileSize * Constants.enemySizeFactor;
     this._speed = this.controller.tileSize * Constants.enemySpeedFactor;
@@ -58,15 +62,36 @@ class Enemy {
   }
 
   void render(Canvas canvas) {
-    Paint enemyColor = Paint()..color = Color(Constants.enemyColor);
+    Color color;
+    switch (this.health.toInt()) {
+      case 1:
+        color = Color(Constants.enemyColorLowHealth);
+        break;
+      case 2:
+        color = Color(Constants.enemyColorMedHealth);
+        break;
+      case 3:
+        color = Color(Constants.enemyColorFullHealth);
+        break;
+      default:
+        color = Color(Constants.transparentColor);
+        break;
+    }
+    Paint enemyColor = Paint()..color = color;
     canvas.drawRect(this.enemyRect, enemyColor);
   }
 
   void update(double delta) {
+    if (this.isDead) {
+      return;
+    }
+
     double stepDistance = this._speed * delta;
     Offset toPlayer =
         this.controller.player.playerRect.center - this.enemyRect.center;
-    if (stepDistance <= toPlayer.distance - this.controller.tileSize * 0.8) {
+    if (stepDistance <=
+        toPlayer.distance -
+            this.controller.tileSize * Constants.enemyHitRange) {
       Offset stepToPlayer =
           Offset.fromDirection(toPlayer.direction, stepDistance);
       this.enemyRect = this.enemyRect.shift(stepToPlayer);
@@ -75,8 +100,19 @@ class Enemy {
     }
   }
 
+  void onTap() {
+    this.health--;
+
+    if (this.health <= 0) {
+      this.isDead = true;
+      this.controller.handleEnemyKill();
+    }
+  }
+
   Debouncer _attackDeboucer = Debouncer(Constants.attackDebounceTime);
   void attack() {
-    _attackDeboucer.run(() => this.controller.player.livesLeft--);
+    if (!this.isDead) {
+      _attackDeboucer.run(() => this.controller.handleAttack());
+    }
   }
 }

@@ -1,5 +1,4 @@
 import 'package:escape_room/components/coords.dart';
-import 'package:escape_room/constants.dart';
 import 'package:escape_room/game_controller.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/services.dart';
@@ -48,8 +47,8 @@ class EventHandler {
 
   void handleDragEvent(Axis direction, DragUpdateDetails details) {
     double xMultipler, yMultipler;
-    xMultipler = yMultipler = 1.0;
     double playerSpeed = this.controller.player.getSpeed();
+    xMultipler = yMultipler = playerSpeed / 3.0;
 
     if (direction == Axis.horizontal) {
       xMultipler = playerSpeed;

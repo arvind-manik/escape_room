@@ -48,7 +48,8 @@ class Player {
     if (this.lifeIcon != null) {
       double lifeIconXPos = this.controller.screenSize.width -
           Constants.iconOffset -
-          Constants.iconSize;
+          Constants.iconSize -
+          5; //Offset for rounded corner phones
       double lifeIconYPos = Constants.iconOffset.toDouble();
       for (int i = 0; i < this.livesLeft; i++) {
         canvas.drawImage(
@@ -95,7 +96,6 @@ class Player {
     this.controller.handleWrap(this.targetCoords, _getRadius());
     Offset stepOffset = this.targetCoords.toOffset() - this.playerRect.center;
 
-    Coords newCoords = Coords.applyOffset(this.targetCoords, stepOffset);
     Offset stepToNewPosition =
         Offset.fromDirection(stepOffset.direction, stepDistance);
     this.playerRect = this.playerRect.shift(stepToNewPosition);

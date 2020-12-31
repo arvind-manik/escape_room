@@ -1,8 +1,8 @@
 import 'package:escape_room/game_controller.dart';
 import 'package:flame/util.dart';
 import 'package:flutter/cupertino.dart';
-import 'package:flutter/gestures.dart';
 import 'package:flutter/services.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -10,10 +10,8 @@ void main() async {
   await flameUtil.fullScreen();
   await flameUtil.setOrientation(DeviceOrientation.portraitUp);
 
-  GameController controller = GameController();
-  runApp(controller.widget);
+  SharedPreferences preferences = await SharedPreferences.getInstance();
 
-  PanGestureRecognizer gestureRecognizer = PanGestureRecognizer();
-  gestureRecognizer.onUpdate = controller.onDrag;
-  flameUtil.addGestureRecognizer(gestureRecognizer);
+  GameController controller = GameController(preferences);
+  runApp(controller.widget);
 }
