@@ -1,6 +1,6 @@
-import 'package:escape_room/components/text_field.dart';
-import 'package:escape_room/constants.dart';
-import 'package:escape_room/game_controller.dart';
+import 'package:BlueBlockRun/components/text_field.dart';
+import 'package:BlueBlockRun/constants.dart';
+import 'package:BlueBlockRun/game_controller.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 

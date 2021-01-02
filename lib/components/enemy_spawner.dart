@@ -1,8 +1,8 @@
 import 'dart:math';
 
-import 'package:escape_room/components/enemy.dart';
-import 'package:escape_room/constants.dart';
-import 'package:escape_room/game_controller.dart';
+import 'package:BlueBlockRun/constants.dart';
+import 'package:BlueBlockRun/components/enemy.dart';
+import 'package:BlueBlockRun/game_controller.dart';
 
 class EnemySpawner {
   final GameController controller;

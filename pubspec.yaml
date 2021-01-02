@@ -30,6 +30,7 @@ dependencies:
   flame: ^0.28.0
   shared_preferences: ^0.5.4+3
   image: ^2.1.14
+  animated_splash_screen: ^1.0.1+2
 
 dev_dependencies:
   flutter_test:

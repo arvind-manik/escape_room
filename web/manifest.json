@@ -1,6 +1,6 @@
 {
-    "name": "escape_room",
-    "short_name": "escape_room",
+    "name": "BlueBlockRun",
+    "short_name": "BlueBlockRun",
     "start_url": ".",
     "display": "standalone",
     "background_color": "#0175C2",

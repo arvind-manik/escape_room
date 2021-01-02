@@ -1,4 +1,4 @@
-package com.example.escape_room
+package com.artun_o.escape_room
 
 import io.flutter.embedding.android.FlutterActivity
 

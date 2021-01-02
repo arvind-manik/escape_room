@@ -1,9 +1,9 @@
 import 'dart:ui' as ui;
 
-import 'package:escape_room/components/coords.dart';
-import 'package:escape_room/constants.dart';
-import 'package:escape_room/game_controller.dart';
-import 'package:escape_room/utils/util.dart';
+import 'package:BlueBlockRun/components/coords.dart';
+import 'package:BlueBlockRun/constants.dart';
+import 'package:BlueBlockRun/game_controller.dart';
+import 'package:BlueBlockRun/utils/util.dart';
 import 'package:flutter/cupertino.dart';
 
 class Player {

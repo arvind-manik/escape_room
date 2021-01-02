@@ -1,4 +1,4 @@
-import 'package:escape_room/game_controller.dart';
+import 'package:BlueBlockRun/game_controller.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
@@ -14,7 +14,9 @@ class GameTextField {
   }
 
   void render(Canvas canvas) {
-    this.painter.layout();
-    this.painter.paint(canvas, this.position);
+    if (this.painter.text != null) {
+      this.painter.layout();
+      this.painter.paint(canvas, this.position);
+    }
   }
 }

@@ -1,7 +1,7 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.example.escape_room">
+    package="com.artun_o.escape_room">
    <application
-        android:label="escape_room"
+        android:label="BlueBlockRun"
         android:icon="@mipmap/ic_launcher">
         <activity
             android:name=".MainActivity"
